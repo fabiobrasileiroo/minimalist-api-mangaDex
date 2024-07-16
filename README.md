@@ -1,4 +1,4 @@
-# MangaDex API
+# MangaDex API mimalista
 
 Esta é uma API Node.js desenvolvida para interagir com a API MangaDex. Ela permite acessar várias informações sobre mangas, como lista de mangas, detalhes de capítulos, capas, e mais.
 
