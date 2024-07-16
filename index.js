@@ -1,13 +1,18 @@
-const express = require('express');
-const GetMangaService = require('./src/MangaDex/getMangaService');
-const { swaggerUi, specs } = require('./src/Swagger/swagger');
-const mangaService = new GetMangaService();
+import express from 'express';
+import { json } from 'express';
+import GetMangaService from './src/MangaDex/getMangaService.js';
+import { swaggerUi, specs } from './src/Swagger/swagger.js';
 
+const mangaService = new GetMangaService();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+// Configurações do Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+app.get('/', async (req, res) => {
+  res.send('Api funcionando')
+})
 
 /**
  * @swagger
@@ -39,7 +44,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
  *                       attributes:
  *                         type: object
  */
-app.get('/mangas', async (req, res) => {
+app.get("/mangas", async (req, res) => {
   try {
     const { page = 0 } = req.query;
     const mangas = await mangaService.getAllMangas(Number(page));
@@ -77,7 +82,7 @@ app.get('/mangas', async (req, res) => {
  *                     attributes:
  *                       type: object
  */
-app.get('/cover/:id', async (req, res) => {
+app.get("/cover/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const cover = await mangaService.getCoverFileName(id);
@@ -117,7 +122,7 @@ app.get('/cover/:id', async (req, res) => {
  *                       attributes:
  *                         type: object
  */
-app.get('/manga/title/:title', async (req, res) => {
+app.get("/manga/title/:title", async (req, res) => {
   try {
     const { title } = req.params;
     const manga = await mangaService.getMangaByTitle(title);
@@ -156,7 +161,7 @@ app.get('/manga/title/:title', async (req, res) => {
  *                 url:
  *                   type: string
  */
-app.get('/manga/cover/:id/:filename', (req, res) => {
+app.get("/manga/cover/:id/:filename", (req, res) => {
   const { id, filename } = req.params;
   const url = mangaService.getMangaCover(id, filename);
   res.json({ url });
@@ -209,11 +214,16 @@ app.get('/manga/cover/:id/:filename', (req, res) => {
  *                       attributes:
  *                         type: object
  */
-app.get('/manga/:id/chapters', async (req, res) => {
+app.get("/manga/:id/chapters", async (req, res) => {
   try {
     const { id } = req.params;
-    const { page = 0, order = 'asc', language } = req.query;
-    const chapters = await mangaService.getMangaChapterList(id, Number(page), order, language);
+    const { page = 0, order = "asc", language } = req.query;
+    const chapters = await mangaService.getMangaChapterList(
+      id,
+      Number(page),
+      order,
+      language
+    );
     res.json(chapters);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -261,11 +271,15 @@ app.get('/manga/:id/chapters', async (req, res) => {
  *                       attributes:
  *                         type: object
  */
-app.get('/manga/:id/volume/:volume', async (req, res) => {
+app.get("/manga/:id/volume/:volume", async (req, res) => {
   try {
     const { id, volume } = req.params;
     const { language } = req.query;
-    const chapters = await mangaService.getMangaByVolume(id, Number(volume), language);
+    const chapters = await mangaService.getMangaByVolume(
+      id,
+      Number(volume),
+      language
+    );
     res.json(chapters);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -297,7 +311,7 @@ app.get('/manga/:id/volume/:volume', async (req, res) => {
  *             schema:
  *               type: object
  */
-app.get('/manga/:id/aggregate', async (req, res) => {
+app.get("/manga/:id/aggregate", async (req, res) => {
   try {
     const { id } = req.params;
     const { language } = req.query;
@@ -331,7 +345,7 @@ app.get('/manga/:id/aggregate', async (req, res) => {
  *                 data:
  *                   type: object
  */
-app.get('/chapter/:id', async (req, res) => {
+app.get("/chapter/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const chapterImageData = await mangaService.getChapterImageData(id);
@@ -370,7 +384,7 @@ app.get('/chapter/:id', async (req, res) => {
  *                 url:
  *                   type: string
  */
-app.get('/chapter/image/:hash/:filename', (req, res) => {
+app.get("/chapter/image/:hash/:filename", (req, res) => {
   const { hash, filename } = req.params;
   const url = mangaService.getChapterImage(hash, filename);
   res.json({ url });
@@ -411,7 +425,7 @@ app.get('/chapter/image/:hash/:filename', (req, res) => {
  *                 coverID:
  *                   type: string
  */
-app.post('/manga/cover-id', (req, res) => {
+app.post("/manga/cover-id", (req, res) => {
   const { mangaItem } = req.body;
   const coverID = mangaService.getCoverId(mangaItem);
   res.json({ coverID });

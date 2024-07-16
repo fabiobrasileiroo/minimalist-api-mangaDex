@@ -1,9 +1,9 @@
-const axios = require('axios');
+import axios from 'axios';
 
 const BASE_URL = 'https://api.mangadex.org';
 const BASE_IMAGE_URL = 'https://uploads.mangadex.org';
 
-class GetMangaService {
+export default class GetMangaService {
   constructor() {
     this.languages = ['en'];
   }
@@ -92,4 +92,3 @@ class GetMangaService {
   }
 }
 
-module.exports = GetMangaService;
