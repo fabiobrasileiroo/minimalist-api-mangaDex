@@ -1,5 +1,6 @@
 import express from 'express';
 import { json } from 'express';
+import path from 'path';
 import GetMangaService from './src/MangaDex/getMangaService.js';
 import { swaggerUi, specs } from './src/Swagger/swagger.js';
 
@@ -7,9 +8,33 @@ const mangaService = new GetMangaService();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Rota para enviar uma imagem
+app.get('/imagem', async (req, res) => {
+  // Obtém o caminho absoluto da imagem usando o módulo 'path'
+  const imagePath = path.resolve('./src/assets/hi.gif'); // Substitua pelo caminho real da sua imagem
+  res.sendFile(imagePath);
+});
+;
+
+// Rota para enviar um HTML com uma imagem
 app.get('/', async (req, res) => {
-  res.send('Api funcionando')
-})
+  // Exemplo de HTML com uma imagem
+  const html = `
+    <!DOCTYPE html>
+    <html lang="br">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>API Funcionando</title>
+    </head>
+    <body>
+      <h1>API Funcionando</h1>
+      <img src="/imagem" alt="Imagem hi">
+    </body>
+    </html>
+  `;
+  res.send(html);
+});
 
 // Configurações do Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
