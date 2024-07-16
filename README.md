@@ -1,7 +1,9 @@
 # MangaDex API mimalista
 ## endpoint publico para teste
 https://minimalist-api-manga-dex.vercel.app/
+<br>
 https://minimalist-api-manga-dex.vercel.app/mangas
+<brm>
 https://minimalist-api-manga-dex.vercel.app/manga/title/naruto
 
 Esta é uma API Node.js desenvolvida para interagir com a API MangaDex. Ela permite acessar várias informações sobre mangas, como lista de mangas, detalhes de capítulos, capas, e mais.
