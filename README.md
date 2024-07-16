@@ -16,6 +16,7 @@ Esta é uma API Node.js desenvolvida para interagir com a API MangaDex. Ela perm
 - **Obter ID da Capa**: Retorna o ID da capa de um manga específico a partir dos relacionamentos do item.
 
 ## Documentação da API
+![localhost_3000_api-docs_](https://github.com/user-attachments/assets/97e8a108-4496-4787-aabd-b8b0a21d1218)
 
 A documentação completa da API está disponível em usando a rota http://localhost:3000/api-docs da api
 
