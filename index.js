@@ -7,12 +7,13 @@ const mangaService = new GetMangaService();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurações do Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
 app.get('/', async (req, res) => {
   res.send('Api funcionando')
 })
+
+// Configurações do Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 
 /**
  * @swagger

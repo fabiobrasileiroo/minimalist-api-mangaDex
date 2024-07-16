@@ -35,7 +35,7 @@ const options = {
       description: 'API para interagir com o MangaDex',
     },
   },
-  apis: ['./src/routes/*.js'], // Arquivos com as rotas da sua API
+  apis: ['./*.js'], // Arquivos com as rotas da sua API
 };
 
 const specs = swaggerJsdoc(options);
