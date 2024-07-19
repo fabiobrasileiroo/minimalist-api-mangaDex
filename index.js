@@ -1,23 +1,105 @@
-import express from 'express';
-import { json } from 'express';
-import path from 'path';
-import GetMangaService from './src/MangaDex/getMangaService.js';
-import { swaggerUi, specs } from './src/Swagger/swagger.js';
+import express from "express";
+import cors from "cors";
+import path from "path";
+import GetMangaService from "./src/MangaDex/getMangaService.js";
+import { swaggerUi, specs } from "./src/Swagger/swagger.js";
+// import allowCors from "./allowCors.js";
 
 const mangaService = new GetMangaService();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware CORS - Certifique-se de que está antes de qualquer rota
+app.use(cors());
+
+app.use(express.json());
+
+// Serve os arquivos estáticos na pasta "public"
+app.use(express.static("public"));
+
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+// app.get('/imagem', (req, res) => {
+//   const imagePath = path.resolve('./src/assets/hi.gif');
+//   res.sendFile(imagePath);
+// });
+
+// app.get('/', (req, res) => {
+//   res.sendFile(path.resolve('./front/public/index.html'));
+// });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+app.get(
+  "/manga/detail/:name",
+    asyncHandler(async (req, res) => {
+      const { name } = req.params;
+      const mangas = await mangaService.getMangaByTitle(name);
+      res.json(mangas.data[0]);
+    })
+);
+
+app.get(
+  "/manga/pages/:name/:chapter",
+  asyncHandler(async (req, res) => {
+    const { name, chapter } = req.params;
+    const mangaSearchResult = await mangaService.getMangaByTitle(name);
+    console.log(mangaSearchResult);
+    const mangaId = mangaSearchResult.data[0].id;
+    const chapterData = await mangaService.getMangaChapterList(
+      mangaId,
+      0,
+      "asc",
+      null
+    );
+    const chapterInfo = chapterData.data.find(
+      (ch) => ch.attributes.chapter === chapter
+    );
+
+    if (chapterInfo) {
+      const chapterImageData = await mangaService.getChapterImageData(
+        chapterInfo.id
+      );
+      const baseUrl = chapterImageData.baseUrl; // Get the base URL
+      const imageUrls = chapterImageData.chapter.data.map(
+        (image) => `${baseUrl}/${image}`
+      );
+      res.json(imageUrls);
+    } else {
+      res.status(404).json({ error: "Capítulo não encontrado" });
+    }
+  })
+);
+
+app.get(
+  "/manga/search/:name",
+  asyncHandler(async (req, res) => {
+    const { name } = req.params;
+    const mangas = await mangaService.getMangaByTitle(name);
+    res.json(mangas);
+  })
+);
+
+// import express from 'express';
+// import { json } from 'express';
+// import path from 'path';
+// import GetMangaService from './src/MangaDex/getMangaService.js';
+// import { swaggerUi, specs } from './src/Swagger/swagger.js';
+
+// const mangaService = new GetMangaService();
+// const app = express();
+// const PORT = process.env.PORT || 3000;
+
 // Rota para enviar uma imagem
-app.get('/imagem', async (req, res) => {
+app.get("/imagem", async (req, res) => {
   // Obtém o caminho absoluto da imagem usando o módulo 'path'
-  const imagePath = path.resolve('./src/assets/hi.gif'); // Substitua pelo caminho real da sua imagem
+  const imagePath = path.resolve("./src/assets/hi.gif"); // Substitua pelo caminho real da sua imagem
   res.sendFile(imagePath);
 });
-;
-
 // Rota para enviar um HTML com uma imagem
-app.get('/', async (req, res) => {
+app.get("/", async (req, res) => {
   // Exemplo de HTML com uma imagem
   const html = `
     <!DOCTYPE html>
@@ -37,8 +119,7 @@ app.get('/', async (req, res) => {
 });
 
 // Configurações do Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 /**
  * @swagger
@@ -455,6 +536,11 @@ app.post("/manga/cover-id", (req, res) => {
   const { mangaItem } = req.body;
   const coverID = mangaService.getCoverId(mangaItem);
   res.json({ coverID });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: err.message });
 });
 
 app.listen(PORT, () => {

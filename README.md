@@ -8,6 +8,8 @@
 <br>
 [https://minimalist-api-manga-dex.vercel.app/manga/title/naruto](https://minimalist-api-manga-dex.vercel.app/manga/title/naruto)
 
+https://minimalist-api-manga-dex.vercel.app/chapter/3baec59f-9d9d-4695-ab92-bec64f495a6a
+
 Esta é uma API Node.js desenvolvida para interagir com a API MangaDex. Ela permite acessar várias informações sobre mangas, como lista de mangas, detalhes de capítulos, capas, e mais.
 
 ## Funcionalidades

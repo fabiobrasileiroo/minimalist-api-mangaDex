@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manga Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Manga Viewer</h1>
+    <div>
+      <input type="text" id="manga-name" placeholder="Enter manga name">
+      <input type="number" id="chapter-number" placeholder="Enter chapter number">
+      <button onclick="fetchMangaPages()">Fetch Manga Pages</button>
+    </div>
+    <div id="images-container"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
