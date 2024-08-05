@@ -3,6 +3,18 @@ import cors from "cors";
 import path from "path";
 import GetMangaService from "./src/MangaDex/getMangaService.js";
 import { swaggerUi, specs } from "./src/Swagger/swagger.js";
+import { scrapeImages } from "manga-web-scripting-fabio";
+
+// (async () => {
+//   try {
+//     const anime = "naruto";
+//     const chapter = 1;
+//     const images = await scrapeImages(anime, chapter);
+//     console.log("Scraped images:", images);
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//   }
+// })();
 // import allowCors from "./allowCors.js";
 
 const mangaService = new GetMangaService();
@@ -33,12 +45,26 @@ const asyncHandler = (fn) => (req, res, next) => {
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.get(
+  "/mangaScrape/:anime/:capitulo",
+  asyncHandler(async (req, res) => {
+    const { anime, capitulo } = req.params;
+    // const chapterNumber = parseInt(capitulo, 10); // Converte capitulo para número, se necessário
+    try {
+      const images = await scrapeImages(anime, capitulo);
+      res.json(images);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  })
+);
+
+app.get(
   "/manga/detail/:name",
-    asyncHandler(async (req, res) => {
-      const { name } = req.params;
-      const mangas = await mangaService.getMangaByTitle(name);
-      res.json(mangas.data[0]);
-    })
+  asyncHandler(async (req, res) => {
+    const { name } = req.params;
+    const mangas = await mangaService.getMangaByTitle(name);
+    res.json(mangas.data[0]);
+  })
 );
 
 app.get(
